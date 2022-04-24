@@ -30,6 +30,7 @@ const router = express.Router()
 
 // INDEX
 // GET /profile 
+//
 router.get('/profile', requireToken, (req, res, next) => {
 	Profile.find()
 		.then((profiles) => {
