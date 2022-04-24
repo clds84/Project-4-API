@@ -51,6 +51,4 @@ router.get('/projects', requireToken, (req, res, next) => {
 		.catch(next)
 })
 
-
-
 module.exports = router
