@@ -24,7 +24,7 @@ const profileSchema = new mongoose.Schema(
     },
     openToCollab: {
         type: Boolean,
-        required: true,
+        required: false,
     },
     machineType: {
         type: String,
