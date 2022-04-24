@@ -99,6 +99,7 @@ router.patch('/topicDiscussion/:id', requireToken, removeBlanks, (req, res, next
 })
 // DESTROY
 // DELETE /topicDiscussion/626574ae4df379dfeecf3773
+//  
 router.delete('/topicDiscussion/:id', requireToken, (req, res, next) => {
 	topicDiscussion.findById(req.params.id)
 		.then(handle404)
