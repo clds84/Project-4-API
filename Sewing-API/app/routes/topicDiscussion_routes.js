@@ -30,6 +30,7 @@ const router = express.Router()
 // INDEX
 // GET /topicDiscussion 
 //
+//
 router.get('/topicDiscussion', requireToken, (req, res, next) => {
 	topicDiscussion.find()
 		.then((topicDiscussions) => {
