@@ -73,6 +73,7 @@ router.post('/profile', requireToken, (req, res, next) => {
 })
 // UPDATE
 // PATCH /profiles/5a7db6c74d55bc51bdf39793
+//
 router.patch('/profile/:id', requireToken, removeBlanks, (req, res, next) => {
 	// if the client attempts to change the `owner` property by including a new
 	// owner, prevent that by deleting that key/value pair
@@ -94,7 +95,7 @@ router.patch('/profile/:id', requireToken, removeBlanks, (req, res, next) => {
 		.catch(next)
 })
 // DESTROY
-// DELETE /profile
+// DELETE /profile/626574ae4df379dfeecf3773
 router.delete('/profile/:id', requireToken, (req, res, next) => {
 	profile.findById(req.params.id)
 		.then(handle404)
