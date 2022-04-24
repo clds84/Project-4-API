@@ -50,5 +50,20 @@ router.get('/projects', requireToken, (req, res, next) => {
 		// if an error occurs, pass it to the handler
 		.catch(next)
 })
+// SHOW
+// GET /projects/6265525bd078af1d97610e32
+//NOTE: some routes will have user ID as part of the document, but some will not.
+//the ones that won't will be seeded data by the creator, me in this case, bc I'm
+//able to seed and not have to be a user to create projects that will be served as
+//tutorials
+router.get('/projects/:id', requireToken, (req, res, next) => {
+	// req.params.id will be set based on the `:id` in the route
+	Project.findById(req.params.id)
+		.then(handle404)
+		// if `findById` is succesful, respond with 200 and "example" JSON
+		.then((project) => res.status(200).json({ project: project.toObject() }))
+		// if an error occurs, pass it to the handler
+		.catch(next)
+})
 
 module.exports = router
