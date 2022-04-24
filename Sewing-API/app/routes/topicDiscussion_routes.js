@@ -46,6 +46,7 @@ router.get('/topicDiscussion', requireToken, (req, res, next) => {
 })
 // SHOW
 // GET /topicDiscussions/6265525bd078af1d97610e32
+//
 router.get('/topicDiscussion/:id', requireToken, (req, res, next) => {
 	// req.params.id will be set based on the `:id` in the route
 	topicDiscussion.findById(req.params.id)
