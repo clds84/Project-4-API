@@ -94,7 +94,7 @@ router.patch('/profile/:id', requireToken, removeBlanks, (req, res, next) => {
 		.catch(next)
 })
 // DESTROY
-// DELETE /profile/
+// DELETE /profile
 router.delete('/profile/:id', requireToken, (req, res, next) => {
 	profile.findById(req.params.id)
 		.then(handle404)
