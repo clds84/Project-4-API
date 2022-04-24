@@ -56,6 +56,7 @@ router.get('/topicDiscussion/:id', requireToken, (req, res, next) => {
 })
 // CREATE
 // POST /topicDiscussions
+//
 router.post('/topicDiscussion', requireToken, (req, res, next) => {
 	// set owner of new topicDiscussion to be current user
 	req.body.topicDiscussion.owner = req.user.id
