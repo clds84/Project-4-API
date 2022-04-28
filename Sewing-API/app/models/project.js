@@ -20,7 +20,7 @@ const projectSchema = new mongoose.Schema(
             required: true,
         },
         pattern: {
-            type: String,
+            type: String,	
             required: true,
         },
         owner: {    

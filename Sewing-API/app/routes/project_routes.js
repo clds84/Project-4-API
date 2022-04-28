@@ -89,7 +89,7 @@ router.post('/projects', (req, res, next) => {
  })
 // UPDATE
 // PATCH /projects/5a7db6c74d55bc51bdf39793
-router.patch('/projects/:id', requireToken, removeBlanks, (req, res, next) => {
+router.patch('/projects/:id', removeBlanks, (req, res, next) => {
 	// if the client attempts to change the `owner` property by including a new
 	// owner, prevent that by deleting that key/value pair
 	delete req.body.project.owner
@@ -99,7 +99,9 @@ router.patch('/projects/:id', requireToken, removeBlanks, (req, res, next) => {
 		.then((project) => {
 			// pass the `req` object and the Mongoose record to `requireOwnership`
 			// it will throw an error if the current user isn't the owner
-			requireOwnership(req, project)
+			//Looks like I don't need this since the update function in the api/projects
+			//file in client includes owner = user._id
+			//requireOwnership(req, project)
 
 			// pass the result of Mongoose's `.update` to the next `.then`
 			return project.updateOne(req.body.project)
@@ -111,7 +113,7 @@ router.patch('/projects/:id', requireToken, removeBlanks, (req, res, next) => {
 })
 // DESTROY
 // DELETE /projects/
-router.delete('/projects/:id', requireToken, (req, res, next) => {
+router.delete('/projects/:id', (req, res, next) => {
 	Project.findById(req.params.id)
 		.then(handle404)
 		.then((project) => {
