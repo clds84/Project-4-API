@@ -4,7 +4,7 @@ const express = require('express')
 const passport = require('passport')
 
 // pull in Mongoose model for examples
-const topicDiscussion = require('../models/topicDiscussion')
+const TopicDiscussion = require('../models/topicDiscussion')
 
 // this is a collection of methods that help us detect situations when we need
 // to throw a custom error
@@ -32,7 +32,7 @@ const router = express.Router()
 //
 //
 router.get('/topicDiscussion', requireToken, (req, res, next) => {
-	topicDiscussion.find()
+	TopicDiscussion.find()
 		.then((topicDiscussions) => {
 			// `topicDiscussions` will be an array of Mongoose documents
 			// we want to convert each one to a POJO, so we use `.map` to
@@ -49,7 +49,7 @@ router.get('/topicDiscussion', requireToken, (req, res, next) => {
 //
 router.get('/topicDiscussion/:id', requireToken, (req, res, next) => {
 	// req.params.id will be set based on the `:id` in the route
-	topicDiscussion.findById(req.params.id)
+	TopicDiscussion.findById(req.params.id)
 		.then(handle404)
 		// if `findById` is succesful, respond with 200 and "topicDiscussion" JSON
 		.then((topicDiscussion) => res.status(200).json({ topicDiscussion: topicDiscussion.toObject() }))
@@ -63,7 +63,7 @@ router.post('/topicDiscussion', requireToken, (req, res, next) => {
 	// set owner of new topicDiscussion to be current user
 	req.body.topicDiscussion.owner = req.user.id
 
-	topicDiscussion.create(req.body.topicDiscussion)
+	TopicDiscussion.create(req.body.topicDiscussion)
 		// respond to succesful `create` with status 201 and JSON of new "topicDiscussion"
 		.then((topicDiscussion) => {
 			res.status(201).json({ topicDiscussion: topicDiscussion.toObject() })
@@ -82,7 +82,7 @@ router.patch('/topicDiscussion/:id', requireToken, removeBlanks, (req, res, next
 	// owner, prevent that by deleting that key/value pair
 	delete req.body.topicDiscussion.owner
 
-	topicDiscussion.findById(req.params.id)
+	TopicDiscussion.findById(req.params.id)
 		.then(handle404)
 		.then((topicDiscussion) => {
 			// pass the `req` object and the Mongoose record to `requireOwnership`
@@ -101,7 +101,7 @@ router.patch('/topicDiscussion/:id', requireToken, removeBlanks, (req, res, next
 // DELETE /topicDiscussion/626574ae4df379dfeecf3773
 //  
 router.delete('/topicDiscussion/:id', requireToken, (req, res, next) => {
-	topicDiscussion.findById(req.params.id)
+	TopicDiscussion.findById(req.params.id)
 		.then(handle404)
 		.then((topicDiscussion) => {
 			// throw an error if current user doesn't own `topicDiscussion`

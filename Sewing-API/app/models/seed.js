@@ -3,7 +3,8 @@
 ///////////////////////////////////////
 //const mongoose = require('./connection')
 const mongoose = require('mongoose')
-const Project = require('./project')
+//const Project = require('./project')
+const Tutorial = require('./tutorial')
 
 ////////////////////////////////////////////
 // Seed Code
@@ -17,7 +18,7 @@ mongoose.connect(db, {
 
 mongoose.connection.on('open', () => {
 	console.log("db is open")
-	const starterProject = [{
+	const starterTutorials = [{
         type: "shirt",
 		fabric: "poplin",
 		interfacing:"medium-weight fusible",
@@ -35,11 +36,11 @@ mongoose.connection.on('open', () => {
 
 	// when we seed data, there are a few steps involved
 	// delete all the data that already exists(will only happen if data exists)
-	Project.remove({})
-        .then(deletedProjects => {
-		    console.log('this is what remove returns', deletedProjects)
+	Tutorial.remove({})
+        .then(deletedTutorials => {
+		    console.log('this is what remove returns', deletedTutorials)
 		    // then we create with our seed data
-            Project.create(starterProject)
+            Tutorial.create(starterTutorials)
                 .then((data) => {
                     console.log('Here is the new seeded data re: starter projects', data)
                     mongoose.connection.close()

@@ -10,6 +10,7 @@ const userRoutes = require('./app/routes/user_routes')
 const profileRoutes = require('./app/routes/profile_routes')
 const topicDiscussionRoutes = require('./app/routes/topicDiscussion_routes')
 const commentRoutes = require('./app/routes/comment_routes')
+const tutorialRoutes = require('./app/routes/tutorial_routes')
 
 
 // require middleware
@@ -76,6 +77,7 @@ app.use(profileRoutes)
 app.use(projectRoutes)
 app.use(topicDiscussionRoutes)
 app.use(commentRoutes)
+app.use(tutorialRoutes)
 
 // register error handling middleware
 // note that this comes after the route middlewares, because it needs to be
