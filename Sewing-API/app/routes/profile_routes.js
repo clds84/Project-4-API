@@ -19,7 +19,7 @@ const requireOwnership = customErrors.requireOwnership
 // this is middleware that will remove blank fields from `req.body`, e.g.
 // { profile: { title: '', text: 'foo' } } -> { profile: { text: 'foo' } }
 const removeBlanks = require('../../lib/remove_blank_fields')
-const profile = require('../models/profile')
+
 // passing this as a second argument to `router.<verb>` will make it
 // so that a token MUST be passed for that route to be available
 // it will also set `req.user`
@@ -32,39 +32,45 @@ const router = express.Router()
 // GET /profile 
 //
 router.get('/profile', requireToken, (req, res, next) => {
-	Profile.find()
-		.then((profiles) => {
+	Profile.findOne({ owner: req.user.id})
+		.populate('owner')
+		.then(handle404)
+		.then((profile) => {
 			// `profiles` will be an array of Mongoose documents
 			// we want to convert each one to a POJO, so we use `.map` to
 			// apply `.toObject` to each one
-			return profiles.map((profile) => profile.toObject())
+			return profile.toObject()	
+			//return profiles.map((profile) => profile.toObject())
 		})
 		// respond with status 200 and JSON of the profiles
-		.then((profiles) => res.status(200).json({ profiles: profiles }))
+		.then((profile) => res.status(200).json({ profile: profile }))
 		// if an error occurs, pass it to the handler
 		.catch(next)
 })
-// SHOW
-// GET /profiles/6265525bd078af1d97610e32
-router.get('/profile/:id', requireToken, (req, res, next) => {
-	// req.params.id will be set based on the `:id` in the route
-	Profile.findById(req.params.id)
-		.then(handle404)
-		// if `findById` is succesful, respond with 200 and "profile" JSON
-		.then((profile) => res.status(200).json({ profile: profile.toObject() }))
-		// if an error occurs, pass it to the handler
-		.catch(next)
-})
+// // SHOW
+// // GET /profiles/6265525bd078af1d97610e32
+// router.get('/profile', (req, res, next) => {
+	
+// 	// req.params.id will be set based on the `:id` in the route
+// 	Profile.findById({ owner: req.user.id})
+// 		.then(handle404)
+// 		// if `findById` is succesful, respond with 200 and "profile" JSON
+// 		.then((profile) => res.status(200).json({ profile: profile.toObject() }))
+// 		// if an error occurs, pass it to the handler
+// 		.catch(next)
+// })
 // CREATE
 // POST /profiles
 router.post('/profile', requireToken, (req, res, next) => {
 	// set owner of new profile to be current user
-	req.body.profile.owner = req.user.id
+	//req.body.profile.owner = req.user.id
 
 	Profile.create(req.body.profile)
 		// respond to succesful `create` with status 201 and JSON of new "profile"
 		.then((profile) => {
 			res.status(201).json({ profile: profile.toObject() })
+			
+
 		})
 		// if an error occurs, pass it off to our error handler
 		// the error handler needs the error message and the `res` object so that it
@@ -94,16 +100,18 @@ router.patch('/profile/:id', requireToken, removeBlanks, (req, res, next) => {
 		// if an error occurs, pass it to the handler
 		.catch(next)
 })
-// DESTROY
-// DELETE /profile/626574ae4df379dfeecf3773
-router.delete('/profile/:id', requireToken, (req, res, next) => {
-	profile.findById(req.params.id)
-		.then(handle404)
+
+// DELETE 
+router.delete('/profile', requireToken, (req, res, next) => {
+	console.log('delete route, user? ', req.user._id)
+	Profile.findOne({ owner: req.user._id })
+		// .then(handle404)
 		.then((profile) => {
+			console.log('this is profile in promise chain of delete', profile)
 			// throw an error if current user doesn't own `profile`
 			requireOwnership(req, profile)
 			// delete the profile ONLY IF the above didn't throw
-			profile.deleteOne()
+		 	profile.deleteOne()
 		})
 		// send back 204 and no content if the deletion succeeded
 		.then(() => res.sendStatus(204))

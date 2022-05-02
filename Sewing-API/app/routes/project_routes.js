@@ -118,7 +118,7 @@ router.delete('/projects/:id', (req, res, next) => {
 		.then(handle404)
 		.then((project) => {
 			// throw an error if current user doesn't own `project`
-			requireOwnership(req, project)
+		//requireOwnership(req, project)
 			// delete the project ONLY IF the above didn't throw
 			project.deleteOne()
 		})
