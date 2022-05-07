@@ -28,22 +28,12 @@ const requireToken = passport.authenticate('bearer', { session: false })
 // instantiate a router (mini app that only handles routes)
 const router = express.Router()
 
-// I will be using this model not
-//only to serve for routes related to user projects, but also for project tutorials
-//provided by the teacher(me)
 // INDEX
 // GET /projects
-//this route will serve to grab all project documents. 
-//NOTE: some routes will have user ID as part of the document, but some will not.
-//the ones that won't will be seeded data by the creator, me in this case, bc I'm
-//able to seed and not have to be a user to create projects that will be served as
-//tutorials
 router.get('/projects', requireToken, (req, res, next) => {
 	Project.find( { owner: req.user.id})
         .populate('owner')
 		.then((projects) => {
-           // let userProjects = projects.filter((project) => project.owner.id == req.user.id)
-			//console.log('these are the user projects', userProjects)
 			// `projects` will be an array of Mongoose documents
 			// we want to convert each one to a POJO, so we use `.map` to
 			// apply `.toObject` to each one
@@ -56,10 +46,6 @@ router.get('/projects', requireToken, (req, res, next) => {
 })
 // SHOW
 // GET /projects/6265525bd078af1d97610e32
-//NOTE: some routes will have user ID as part of the document, but some will not.
-//the ones that won't will be seeded data by the creator, me in this case, bc I'm
-//able to seed and not have to be a user to create projects that will be served as
-//tutorials
 router.get('/projects/:id', (req, res, next) => {
 	// req.params.id will be set based on the `:id` in the route
 	Project.findById(req.params.id)
@@ -71,12 +57,11 @@ router.get('/projects/:id', (req, res, next) => {
 })
 // CREATE
 // POST /projects
-router.post('/projects', (req, res, next) => {
+router.post('/projects', requireToken, (req, res, next) => {
 	// set owner of new project to be current user
 	console.log('this is req.user', req.user)
 	console.log('this is req.body', req.body)
-	//req.body.project.owner = req.user.id
-
+	//req.body.project.owner = req.user._id
 	Project.create(req.body.project)
 		// respond to succesful `create` with status 201 and JSON of new "project"
 		.then((project) => {
@@ -89,11 +74,10 @@ router.post('/projects', (req, res, next) => {
  })
 // UPDATE
 // PATCH /projects/5a7db6c74d55bc51bdf39793
-router.patch('/projects/:id', removeBlanks, (req, res, next) => {
+router.patch('/projects/:id', requireToken, removeBlanks, (req, res, next) => {
 	// if the client attempts to change the `owner` property by including a new
 	// owner, prevent that by deleting that key/value pair
 	delete req.body.project.owner
-
 	Project.findById(req.params.id)
 		.then(handle404)
 		.then((project) => {
@@ -101,7 +85,7 @@ router.patch('/projects/:id', removeBlanks, (req, res, next) => {
 			// it will throw an error if the current user isn't the owner
 			//Looks like I don't need this since the update function in the api/projects
 			//file in client includes owner = user._id
-			//requireOwnership(req, project)
+			requireOwnership(req, project)
 
 			// pass the result of Mongoose's `.update` to the next `.then`
 			return project.updateOne(req.body.project)
@@ -113,12 +97,12 @@ router.patch('/projects/:id', removeBlanks, (req, res, next) => {
 })
 // DESTROY
 // DELETE /projects/
-router.delete('/projects/:id', (req, res, next) => {
+router.delete('/projects/:id', requireToken,(req, res, next) => {
 	Project.findById(req.params.id)
 		.then(handle404)
 		.then((project) => {
 			// throw an error if current user doesn't own `project`
-		//requireOwnership(req, project)
+		requireOwnership(req, project)
 			// delete the project ONLY IF the above didn't throw
 			project.deleteOne()
 		})
