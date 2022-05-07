@@ -86,8 +86,7 @@ router.patch('/projects/:id', requireToken, removeBlanks, (req, res, next) => {
 			//Looks like I don't need this since the update function in the api/projects
 			//file in client includes owner = user._id
 			requireOwnership(req, project)
-
-			// pass the result of Mongoose's `.update` to the next `.then`
+		// pass the result of Mongoose's `.update` to the next `.then`
 			return project.updateOne(req.body.project)
 		})
 		// if that succeeded, return 204 and no JSON
